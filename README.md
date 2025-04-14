@@ -112,7 +112,7 @@ cloudinary-nextjs/
 ├── public/
 ├── styles/
 ├── types/
-├── .env.example
+├── .env.local
 ├── .gitignore
 ├── next.config.js
 ├── package.json
