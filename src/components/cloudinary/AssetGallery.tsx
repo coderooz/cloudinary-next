@@ -14,38 +14,19 @@ import { AssetData } from '@/lib/cloudinary/cloudinary-types';
 
 interface AssetGalleryProps {
   selectImage: (image: AssetData) => void;
+  imageData : AssetData[];
   selectedImage?: AssetData;
+  isLoading?:boolean;
+  maxResults?: number | string; 
+  setMaxResult: (maxResults: number|string ) => void;
 }
 
-export default function AssetGallery({ selectImage, selectedImage }: AssetGalleryProps) {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [maxResults, setMaxResults] = useState<number>(6);
-  const [imageData, setImageData] = useState<AssetData[]>([]);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const result = await fetch(`/api/private/assets/list?max_results=${maxResults}`);
-      if (result.ok) {
-        const data = await result.json();
-        setImageData(data.resources || []); // Change to `data.assets` if your API uses that
-      } else {
-        console.error('Error fetching data:', result.statusText);
-      }
-    } catch (error) {
-      console.error('Fetch failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function AssetGallery({ imageData, selectImage, selectedImage, isLoading, maxResults, setMaxResult }: AssetGalleryProps) {
+  
   const setSelectedImage = (image: AssetData) => {
     selectImage(image);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [maxResults]);
 
   return (
     <Card>
@@ -72,7 +53,7 @@ export default function AssetGallery({ selectImage, selectedImage }: AssetGaller
                   <SelectItem value="raw">Raw files</SelectItem>
                 </SelectContent>
               </Select>
-              <Select defaultValue="6" onValueChange={(val) => setMaxResults(Number(val))}>
+              <Select defaultValue={String(maxResults) || "5"} onValueChange={(val) => setMaxResult(Number(val))}>
                 <SelectTrigger className="w-[140px] h-9">
                   <SelectValue placeholder="Max results" />
                 </SelectTrigger>
@@ -97,7 +78,7 @@ export default function AssetGallery({ selectImage, selectedImage }: AssetGaller
             </div>
           </div>
 
-          {loading ? (
+          {isLoading ? (
             <p className="text-sm text-center text-muted-foreground">Loading assets...</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -107,12 +88,11 @@ export default function AssetGallery({ selectImage, selectedImage }: AssetGaller
                   whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
                   transition={{ type: 'spring', stiffness: 300 }}
                   className="bg-white border rounded-lg overflow-hidden"
+                  onClick={() => setSelectedImage(image)}
                 >
                   <div
-                    className={`aspect-video relative cursor-pointer ${
-                      selectedImage?.asset_id === image.asset_id ? 'bg-blue-100' : 'bg-gray-100'
-                    }`}
-                    onClick={() => setSelectedImage(image)}
+                    className='aspect-video relative cursor-pointer bg-gray-100'
+                    
                   >
                     <Image
                       src={image.url}

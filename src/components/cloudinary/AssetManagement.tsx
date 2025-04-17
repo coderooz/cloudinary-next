@@ -12,44 +12,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { AssetData } from '@/lib/cloudinary/cloudinary-types';
+
+interface AssetManagementProps{
+    imageData: AssetData[]
+}
 
 
-const dummyImages = [
-{
-    id: 'image1',
-    url: 'https://res.cloudinary.com/dgis8gvg4/image/upload/v1737123545/logo_erjx1r.png',
-    publicId: 'logo_erjx1r',
-    format: 'png',
-    width: 400,
-    height: 300,
-    tags: ['logo', 'brand'],
-    uploaded: '2025-04-15T12:30:00Z'
-},
-{
-    id: 'image2',
-    url: 'https://res.cloudinary.com/dgis8gvg4/image/upload/v1737123545/logo_erjx1r.jpg',
-    publicId: 'sample1_a4xezd',
-    format: 'jpg',
-    width: 800,
-    height: 600,
-    tags: ['sample', 'nature'],
-    uploaded: '2025-04-14T10:15:00Z'
-},
-{
-    id: 'image3',
-    url: 'https://res.cloudinary.com/dgis8gvg4/image/upload/v1737123545/logo_erjx1r.jpg',
-    publicId: 'sample2_dw6i9s',
-    format: 'jpg',
-    width: 1200,
-    height: 800,
-    tags: ['sample', 'architecture'],
-    uploaded: '2025-04-13T16:45:00Z'
-},
-];
+export default function AssetManagement({imageData}: AssetManagementProps){
 
-export default function AssetManagement(){
-
-    const [searchImage, setSearchImage] = useState<string | null>('');
+    const [searchImage, setSearchImage] = useState<string>('');
 
     return (
         <>
@@ -88,7 +60,7 @@ export default function AssetManagement(){
                 </div>
                 
                 <div className="divide-y">
-                    {dummyImages.map((image) => (
+                    {imageData.map((image) => (
                     <motion.div 
                         key={image.id}
                         whileHover={{ backgroundColor: 'rgba(249, 250, 251, 1)' }}
@@ -98,14 +70,14 @@ export default function AssetManagement(){
                         <div className="w-12 h-12 rounded bg-gray-100 overflow-hidden">
                             <Image 
                             src={image.url}
-                            alt={image.publicId}
+                            alt={image.public_id}
                             width={48}
                             height={48}
                             className="w-full h-full object-cover"
                             />
                         </div>
                         <div>
-                            <p className="font-medium text-sm text-gray-900 truncate">{image.publicId}</p>
+                            <p className="font-medium text-sm text-gray-900 truncate">{image.public_id}</p>
                             <p className="text-xs text-gray-500">
                             {image.width} × {image.height}
                             </p>
@@ -117,9 +89,9 @@ export default function AssetManagement(){
                         </div>
                         
                         <div className="flex flex-wrap gap-2">
-                        {image.tags.map((tag) => (
+                        {/* {image.tags.map((tag) => (
                             <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                        ))}
+                        ))} */}
                         </div>
                         
                         <div className="flex gap-2">
