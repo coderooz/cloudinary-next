@@ -37,8 +37,8 @@ A modern Next.js 15 application showcasing seamless integration with Cloudinary 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/coderooz/Cloudinary-NextJs.git
-cd Cloudinary-NextJs
+git clone https://github.com/coderooz/cloudinary-next.git
+cd cloudinary-next
 ```
 
 2. Install dependencies:
