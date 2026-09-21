@@ -1,0 +1,70 @@
+{
+    // --- Core Editing & Formatting ---
+    "editor.formatOnSave": false, // Changed from false to auto-format files
+    "editor.tabSize": 2, // Standard for Next.js/React is usually 2 spaces
+    "editor.insertSpaces": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode", // Uses Prettier extension
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit" // Runs ESLint auto-fix on save
+    },
+    
+    // --- Error Validation (Fixes your issue) ---
+    "js/ts.validate.enabled": true, // Re-enabled
+    
+    // --- Tailwind CSS & React Intellisense ---
+    "editor.quickSuggestions": {
+      "strings": true // Crucial for Tailwind class suggestions inside className="..."
+    },
+    "tailwindCSS.includeLanguages": {
+      "typescript": "javascript",
+      "typescriptreact": "javascript"
+    },
+    "emmet.includeLanguages": {
+      "javascript": "javascriptreact",
+      "typescript": "typescriptreact" // Enables HTML-style expansion in TSX
+    },
+  
+    // --- File Behaviors ---
+    "files.autoSave": "onWindowChange",
+    "files.defaultLanguage": "typescriptreact",
+    "editor.autoClosingBrackets": "always",
+    "editor.autoClosingQuotes": "beforeWhitespace",
+    "workbench.editor.enablePreview": false, // Prevents files from closing when you click another
+  
+    // --- Explorer Exclusions (Cleaned up) ---
+    "files.exclude": {
+      "**/.git": true,
+      "**/node_modules": true,
+      "**/.next": true,
+      "**/.ds_store": true,
+      "**/dist": true,
+      "**/build": true,
+      "**/.vercel": true,
+      "next-env.d.ts": true,
+      "tsconfig.tsbuildinfo": true
+    },
+  
+    // --- Language Specific Overrides ---
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
+    },
+  
+    // --- Visuals ---
+    "editor.rulers": [80, 120],
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+  
+    // --- Your Previous Preferences (Kept) ---
+    "workbench.localHistory.enabled": true,
+    "markdown.links.openLocation": "currentGroup",
+    "markdown.preview.scrollEditorWithPreview": true,
+    "js/ts.format.enabled": true,
+    "prettier.enable": true,
+    "prettier.requireConfig": true
+  }

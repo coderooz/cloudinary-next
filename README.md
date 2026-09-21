@@ -37,8 +37,8 @@ A modern Next.js 15 application showcasing seamless integration with Cloudinary 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/coderooz/Cloudinary-NextJs.git
-cd Cloudinary-NextJs
+git clone https://github.com/coderooz/cloudinary-next.git
+cd cloudinary-next
 ```
 
 2. Install dependencies:
@@ -81,40 +81,44 @@ yarn dev
 ## Project Structure
 
 ```
-cloudinary-nextjs/
-├── app/
-│   ├── (auth)/
-│   │   ├── login/
-│   │   └── register/
-│   ├── (dashboard)/
-│   │   ├── dashboard/
-│   │   ├── gallery/
-│   │   └── settings/
-│   ├── api/
-│   │   ├── auth/
-│   │   └── private/
-│   │       └── assets/
-│   │           └── [actionName]/
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   ├── cloudinary/
-│   │   ├── AssetGallery.tsx
-│   │   ├── ImageUploader.tsx
-│   │   └── ...
-│   ├── layout/
-│   ├── ui/
-│   └── animations/
-├── lib/
-│   ├── cloudinary/
-│   ├── auth/
-│   └── utils/
+cloudinary-next/
+├── src/
+│   ├── app/
+│   │   ├── api/private/assets/
+│   │   │   ├── delete/route.ts
+│   │   │   ├── folders/route.ts
+│   │   │   ├── list/route.ts
+│   │   │   ├── search/route.ts
+│   │   │   ├── tags/route.ts
+│   │   │   ├── transform/route.ts
+│   │   │   └── upload/route.ts
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── rop.tsx
+│   ├── components/
+│   │   ├── cloudinary/
+│   │   │   ├── AssetGallery.tsx
+│   │   │   ├── AssetManagement.tsx
+│   │   │   ├── AssetOptimizer.tsx
+│   │   │   ├── AssetUpload.tsx
+│   │   │   ├── NoImageMessage.tsx
+│   │   │   ├── SelectedAsset.tsx
+│   │   │   └── Transformer.tsx
+│   │   └── ui/
+│   └── lib/
+│       ├── cloudinary/
+│       │   ├── cloudinary-client.ts
+│       │   ├── cloudinary-init.ts
+│       │   └── cloudinary-types.ts
+│       └── utils.ts
 ├── public/
-├── styles/
-├── types/
+├── .github/
+├── .workspace/
+│   ├── PRI/
+│   └── LFI/
 ├── .env.local
 ├── .gitignore
-├── next.config.js
+├── next.config.ts
 ├── package.json
 ├── README.md
 └── tsconfig.json
@@ -157,13 +161,12 @@ export default function GalleryPage() {
 The project implements a comprehensive API for interacting with Cloudinary:
 
 - `POST /api/private/assets/upload` - Upload images to Cloudinary
-- `POST /api/private/assets/delete` - Delete images from Cloudinary
+- `DELETE /api/private/assets/delete` - Delete images from Cloudinary
 - `GET /api/private/assets/list` - List images from a folder
-- `GET /api/private/assets/details` - Get details of a specific image
-- `POST /api/private/assets/rename` - Rename an image
+- `GET /api/private/assets/search` - Search assets via Cloudinary search expression
+- `GET|POST|DELETE /api/private/assets/folders` - List, create, or delete folders
+- `GET|POST|DELETE /api/private/assets/tags` - List, add, or remove tags
 - `POST /api/private/assets/transform` - Apply transformations to an image
-- `POST /api/private/assets/tag` - Tag images
-- `POST /api/private/assets/generateArchive` - Generate a ZIP archive of images
 
 ## Contributing
 

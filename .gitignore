@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# mcp runtime state
+.mcp-runtime.json
+
+# workspace development artifacts (PRI/LFI committed explicitly)
+.workspace/
