@@ -37,7 +37,7 @@ npm install
 
 3. Set up environment variables:
 
-Create a `.env.local` file in the root directory:
+Copy `.env.example` to `.env.local` and fill in your Cloudinary credentials:
 
 ```
 CLOUDINARY_CLOUD_NAME=your_cloud_name

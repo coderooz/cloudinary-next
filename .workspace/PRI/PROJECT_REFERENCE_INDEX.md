@@ -1,6 +1,6 @@
 # Project Reference Index (PRI) — cloudinary-next
 
-**PRI Version:** 2.0
+**PRI Version:** 2.1
 **Date:** 2026-09-21
 **Status:** VERIFIED (all entries confirmed against repository filesystem)
 **Source of truth:** Repository filesystem
@@ -28,13 +28,22 @@ cloudinary-next/
 │   ├── CODEOWNERS                    # * @coderooz
 │   ├── dependabot.yml                # npm + github-actions, weekly, minor/patch
 │   ├── FUNDING.yml                   # github/buy_me_a_coffee: coderooz
+│   ├── labels.yml                    # 22 labels (defaults + custom) synced by labels workflow
 │   ├── PULL_REQUEST_TEMPLATE.md
-│   ├── ISSUES_TEMPLATE/              # Issue forms
+│   ├── ISSUES_TEMPLATE/              # Issue forms (6)
 │   │   ├── bug_report.yml
-│   │   └── feature_request.yml
-│   └── workflows/
-│       └── ci.yml                    # lint + typecheck + build on push/PR
-├── .opencode/                        # OpenCode plugin workspace (own package.json, node_modules)
+│   │   ├── config.yml                # blank issues disabled, contact links
+│   │   ├── documentation.yml
+│   │   ├── feature_request.yml
+│   │   ├── question.yml
+│   │   └── security_report.yml
+│   └── workflows/                    # 5 workflows
+│       ├── auto-tag.yml              # tag on push to main (creates v0.0.1; GITHUB_TOKEN cannot trigger release)
+│       ├── ci.yml                    # lint + typecheck + build on push/PR
+│       ├── labels.yml                # sync labels.yml → repo labels
+│       ├── release.yml               # build + GitHub Release on tag (workflow_dispatch supported)
+│       └── stale.yml                 # close stale issues/PRs after 60 days
+├── .opencode/                        # OpenCode plugin workspace (LOCAL-ONLY, not tracked; own package.json, node_modules)
 ├── .vscode/
 │   ├── launch.json                   # EMPTY configurations
 │   ├── settings.json                 # prettier, eslint-on-save, tailwind intellisense
@@ -90,14 +99,16 @@ cloudinary-next/
 ├── CHANGELOG.md                      # Keep a Changelog format
 ├── CODE_OF_CONDUCT.md                # Contributor Covenant 2.1
 ├── CONTRIBUTING.md                   # Contribution guidelines
+├── DEVELOPER_NOTES.md                # Developer notes (architecture, env, run, deploy, recovery)
 ├── LICENSE                           # MIT, © 2026 Coderooz (Ranit Saha)
 ├── README.md
 ├── SECURITY.md                       # Security notes (env-only creds, private routes)
 ├── .editorconfig                     # 2-space, LF, UTF-8
+├── .env.example                      # Documented env var template (placeholders only)
 ├── .gitattributes                    # text=auto, LF for source, binary for images
 ├── .gitignore                        # node_modules, .next, .env*, .workspace/, .mcp-runtime.json, tsbuildinfo
 ├── .nvmrc                            # 22
-├── .mcp-runtime.json                 # MCP runtime state (gitignored)
+├── .mcp-runtime.json                 # MCP runtime state (LOCAL-ONLY, gitignored)
 ├── cloudinary-next.project-mcp.json  # MCP project config (project: docs-repo)
 └── docs-repo.project-mcp.json        # MCP project config (project: docs-repo)
 ```
@@ -161,7 +172,12 @@ cloudinary-next/
 | `.github/dependabot.yml` | npm + github-actions; weekly Monday 09:00 Asia/Kolkata; minor/patch only; ignore semver-major |
 | `.github/CODEOWNERS` | `* @coderooz`; config files owned by @coderooz |
 | `.github/FUNDING.yml` | github: coderooz; buy_me_a_coffee: coderooz; custom: https://www.coderooz.in |
+| `.github/labels.yml` | 22 labels: 9 GitHub defaults + dependencies, automated, ci, security, performance, refactor, chore, breaking change, needs triage, stale, priority: high/medium/low |
 | `.github/workflows/ci.yml` | Node 22; `npm ci`; lint + typecheck + build; Cloudinary secrets from repo secrets |
+| `.github/workflows/auto-tag.yml` | Tags `v{package.json version}` on push to main; uses default GITHUB_TOKEN (cannot trigger release workflow) |
+| `.github/workflows/release.yml` | On tag: `npm ci` + build; creates GitHub Release; supports `workflow_dispatch` |
+| `.github/workflows/stale.yml` | Marks issues/PRs stale after 60 days inactivity; closes after 7 more days |
+| `.github/workflows/labels.yml` | Syncs `.github/labels.yml` to repo labels on push/PR |
 | `.nvmrc` | `22` |
 
 ---
@@ -195,5 +211,8 @@ cloudinary-next/
 | `public/cloudinary-demo-app.txt` references cloud `dgis8gvg4` (dummy data) | VERIFIED |
 | Both `.project-mcp.json` files declare project `docs-repo` | VERIFIED |
 | `.vscode/launch.json`, `template.json` empty | VERIFIED |
-| `.mcp-runtime.json` gitignored | VERIFIED |
+| `.mcp-runtime.json` gitignored; `.opencode/` untracked (both LOCAL-ONLY) | VERIFIED |
 | 10 lint warnings (unused imports/params) remain | VERIFIED — out of scope, non-blocking |
+| Tag `v0.0.1` exists on origin (auto-tag workflow); `package.json` version is `0.1.0` | VERIFIED — auto-tag reads package version at tag time; changelog `[0.1.0]` section describes initial release |
+| Auto-tag pushes with default `GITHUB_TOKEN`, which GitHub blocks from triggering the Release workflow | VERIFIED — use `workflow_dispatch` or a PAT secret (see issue #8) |
+| No automated tests; validation = `npm run lint` + `npx tsc --noEmit` + `npm run build` | VERIFIED — documented in DEVELOPER_NOTES.md |
