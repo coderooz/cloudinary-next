@@ -11,7 +11,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const result = await cloudinary.uploader.destroy(publicId, {
-      resource_type: resourceType as any
+      resource_type: resourceType
     });
 
     return NextResponse.json(result);

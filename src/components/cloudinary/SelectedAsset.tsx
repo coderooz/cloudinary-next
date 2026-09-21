@@ -1,7 +1,10 @@
 'use client';
 
+import Image from 'next/image';
+import { AssetData } from '@/lib/cloudinary/cloudinary-types';
+
 interface SelectedAssetProps {
-  asset: any;
+  asset: AssetData;
   onRemove: () => void;
   onDelete: () => void;
 }
@@ -13,7 +16,7 @@ export const SelectedAsset: React.FC<SelectedAssetProps> = ({
 }) => {
   return (
     <div className="border p-6 rounded-lg">
-      <img src={asset.secure_url} alt={asset.public_id} className="w-full h-auto mb-4" />
+      <Image src={asset.secure_url} alt={asset.public_id} width={asset.width} height={asset.height} className="w-full h-auto mb-4" />
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-sm text-muted-foreground">Public ID</p>

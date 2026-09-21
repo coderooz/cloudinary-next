@@ -1,0 +1,54 @@
+name: Documentation
+description: Report a documentation issue or request documentation improvements
+title: "docs: "
+labels: [documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the documentation. Please fill in the details below.
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation type
+      description: What kind of documentation issue is this?
+      multiple: true
+      options:
+        - README
+        - API reference
+        - Setup / installation guide
+        - Code comments / JSDoc
+        - CHANGELOG
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-wrong
+    attributes:
+      label: What is incorrect or missing?
+      description: Describe the problem with the current documentation.
+      placeholder: "e.g., The README still references Next.js 15, but the project is on Next.js 16."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should it say?
+      description: Describe the expected/correct documentation content.
+    validations:
+      required: false
+  - type: input
+    id: location
+    attributes:
+      label: File or section
+      description: Where is the issue located?
+      placeholder: "e.g., README.md, src/lib/cloudinary/cloudinary-client.ts"
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have searched existing issues and this is not a duplicate.
+          required: true

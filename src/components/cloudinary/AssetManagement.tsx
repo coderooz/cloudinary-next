@@ -2,7 +2,6 @@
 'use client';
 
 import { useState } from 'react';
-import Head from 'next/head';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Edit, Trash2, Download } from 'lucide-react';
@@ -35,7 +34,7 @@ export default function AssetManagement({imageData}: AssetManagementProps){
             <CardContent>
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                <Input type="text" value={searchImage} onChange={(text)=>setSearchImage(text)}  placeholder="Search assets..." className="max-w-md" />
+                <Input type="text" value={searchImage} onChange={(e)=>setSearchImage(e.target.value)}  placeholder="Search assets..." className="max-w-md" />
                 <Select defaultValue="date-desc">
                     <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Sort by" />

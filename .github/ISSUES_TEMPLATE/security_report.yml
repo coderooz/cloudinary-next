@@ -1,0 +1,61 @@
+name: Security Vulnerability
+description: Report a security vulnerability (do NOT include sensitive details here)
+title: "security: "
+labels: [security]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Important
+
+        **Do NOT disclose sensitive details (credentials, tokens, exploit code) in this public issue.**
+
+        For responsible disclosure, please report privately instead:
+        - Email: **contact@coderooz.in**
+        - Or open a [private security advisory](https://github.com/coderooz/cloudinary-next/security/advisories/new)
+
+        This template is for triage only — a maintainer will follow up privately.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: High-level description of the vulnerability (no sensitive details).
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential impact
+      description: What could an attacker achieve? (e.g., credential exposure, XSS, data loss)
+    validations:
+      required: true
+  - type: dropdown
+    id: affected
+    attributes:
+      label: Affected area
+      options:
+        - API route (/api/private/*)
+        - Client component
+        - Dependencies
+        - Environment / deployment
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have NOT included sensitive details (credentials, tokens, exploit code) in this public issue.
+          required: true

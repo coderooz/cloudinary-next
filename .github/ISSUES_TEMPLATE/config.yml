@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Cloudinary Support
+    url: https://support.cloudinary.com
+    about: Issues with the Cloudinary platform itself (not this demo app).
+  - name: Cloudinary Docs
+    url: https://cloudinary.com/documentation
+    about: Cloudinary SDK and API reference documentation.
+  - name: Coderooz Website
+    url: https://www.coderooz.in
+    about: Contact the maintainer (Ranit Saha / Coderooz).

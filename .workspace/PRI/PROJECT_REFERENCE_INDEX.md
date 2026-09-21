@@ -1,6 +1,6 @@
 # Project Reference Index (PRI) — cloudinary-next
 
-**PRI Version:** 1.0
+**PRI Version:** 2.0
 **Date:** 2026-09-21
 **Status:** VERIFIED (all entries confirmed against repository filesystem)
 **Source of truth:** Repository filesystem
@@ -13,7 +13,7 @@
 |-------|-------|
 | Project name | cloudinary-next |
 | Package name | `cloudinary-nextjs` |
-| Type | Next.js 15 (App Router) demo application for Cloudinary media management |
+| Type | Next.js 16 (App Router) demo application for Cloudinary media management |
 | Language | TypeScript (strict) |
 | Package manager | npm |
 | Git remote | `https://github.com/coderooz/cloudinary-next.git` (branch `main`) |
@@ -28,14 +28,18 @@ cloudinary-next/
 │   ├── CODEOWNERS                    # * @coderooz
 │   ├── dependabot.yml                # npm + github-actions, weekly, minor/patch
 │   ├── FUNDING.yml                   # github/buy_me_a_coffee: coderooz
-│   ├── ISSUE_TEMPLATE.md
-│   └── PULL_REQUEST_TEMPLATE.md
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   ├── ISSUES_TEMPLATE/              # Issue forms
+│   │   ├── bug_report.yml
+│   │   └── feature_request.yml
+│   └── workflows/
+│       └── ci.yml                    # lint + typecheck + build on push/PR
 ├── .opencode/                        # OpenCode plugin workspace (own package.json, node_modules)
 ├── .vscode/
 │   ├── launch.json                   # EMPTY configurations
 │   ├── settings.json                 # prettier, eslint-on-save, tailwind intellisense
 │   └── template.json                 # EMPTY
-├── .workspace/                       # Development artifacts (PRI/LFI live here)
+├── .workspace/                       # Development artifacts (PRI/LFI live here; gitignored)
 │   ├── PRI/
 │   │   └── PROJECT_REFERENCE_INDEX.md   # THIS FILE
 │   ├── LFI/
@@ -59,35 +63,41 @@ cloudinary-next/
 │   │   │   └── upload/route.ts       # POST upload asset
 │   │   ├── globals.css
 │   │   ├── layout.tsx                # Root layout (metadata: "Cloudinary - NextJs App")
-│   │   ├── page.tsx                  # Home page (client; tabs gallery/upload/transform/optimize/manage)
-│   │   └── rop.tsx                   # Alternate "Cloudinary Media Manager" page (client; NOT routed)
+│   │   └── page.tsx                  # Home page (client; tabs gallery/upload/transform/optimize/manage)
 │   ├── components/
 │   │   ├── cloudinary/
-│   │   │   ├── AssetGallery.tsx      # Gallery grid (server-rendered)
+│   │   │   ├── AssetGallery.tsx      # Gallery grid (client; select + maxResults controls)
 │   │   │   ├── AssetManagement.tsx   # Search + sort UI
 │   │   │   ├── AssetOptimizer.tsx    # Optimization UI
 │   │   │   ├── AssetUpload.tsx       # Drag-drop upload UI
 │   │   │   ├── NoImageMessage.tsx    # Empty state
-│   │   │   ├── SelectedAsset.tsx     # Asset detail panel
+│   │   │   ├── SelectedAsset.tsx     # Asset detail panel (named export)
 │   │   │   └── Transformer.tsx       # Brightness/contrast/saturation sliders
 │   │   └── ui/                       # shadcn/ui components (badge, button, card, dialog, input, label, pagination, popover, select, separator, slider, sonner, switch, tabs)
 │   └── lib/
 │       ├── utils.ts                  # cn(), formatFileSize(), formatDate(), truncateText(), etc.
 │       └── cloudinary/
-│           ├── cloudinary-client.ts  # uploadAsset, deleteAsset, bulkDeleteAssets, listAssets, getAssetDetails, renameAsset, transformAsset, tagAssets
+│           ├── cloudinary-client.ts  # uploadAsset, deleteAsset, bulkDeleteAssets, listAssets, getAssetDetails, renameAsset, transformAsset, tagAssets, generateArchive, getFolders, createFolder, getUsage, getOptimizedUrl
 │           ├── cloudinary-init.ts    # v2 config from env vars
 │           └── cloudinary-types.ts   # AssetData interface
 ├── components.json                   # shadcn config (new-york style, lucide)
-├── eslint.config.mjs                 # next/core-web-vitals + next/typescript
-├── next.config.ts                    # reactStrictMode, images.domains [res.cloudinary.com]
+├── eslint.config.mjs                 # flat config: next/core-web-vitals + next/typescript
+├── next.config.ts                    # reactStrictMode, images.remotePatterns [res.cloudinary.com]
 ├── package.json / package-lock.json
 ├── postcss.config.mjs                # @tailwindcss/postcss
 ├── tsconfig.json                     # strict, @/* → ./src/*
-├── uaif.json                         # @uaif/adapter-cloudinary placeholder creds (SANITIZE)
+├── AGENTS.md                         # Agent guidance (stack, commands, conventions)
+├── CHANGELOG.md                      # Keep a Changelog format
+├── CODE_OF_CONDUCT.md                # Contributor Covenant 2.1
+├── CONTRIBUTING.md                   # Contribution guidelines
+├── LICENSE                           # MIT, © 2026 Coderooz (Ranit Saha)
 ├── README.md
-├── SECURITY.md                       # EMPTY
-├── .gitignore
-├── .mcp-runtime.json                 # MCP runtime state (NOT ignored — add to .gitignore)
+├── SECURITY.md                       # Security notes (env-only creds, private routes)
+├── .editorconfig                     # 2-space, LF, UTF-8
+├── .gitattributes                    # text=auto, LF for source, binary for images
+├── .gitignore                        # node_modules, .next, .env*, .workspace/, .mcp-runtime.json, tsbuildinfo
+├── .nvmrc                            # 22
+├── .mcp-runtime.json                 # MCP runtime state (gitignored)
 ├── cloudinary-next.project-mcp.json  # MCP project config (project: docs-repo)
 └── docs-repo.project-mcp.json        # MCP project config (project: docs-repo)
 ```
@@ -99,7 +109,6 @@ cloudinary-next/
 | Entry point | Path | Type | Purpose |
 |-------------|------|------|---------|
 | Home page | `src/app/page.tsx` | Client component | Tabbed media manager (gallery/upload/transform/optimize/manage) |
-| Alt page | `src/app/rop.tsx` | Client component | "Cloudinary Media Manager" (Gallery/Upload/Transform tabs); NOT routed (no page.tsx) |
 | Root layout | `src/app/layout.tsx` | Server component | Metadata + Geist fonts |
 | API: list | `src/app/api/private/assets/list/route.ts` | Route handler | GET assets (folder, resource_type, max_results, next_cursor) |
 | API: upload | `src/app/api/private/assets/upload/route.ts` | Route handler | POST file upload (base64 data URI) |
@@ -118,20 +127,20 @@ cloudinary-next/
 | Module | Exports | Notes |
 |--------|---------|-------|
 | `cloudinary-init.ts` | `cloudinary` (v2 instance) | Configured from `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` env vars |
-| `cloudinary-client.ts` | `uploadAsset`, `deleteAsset`, `bulkDeleteAssets`, `listAssets`, `getAssetDetails`, `renameAsset`, `transformAsset`, `tagAssets` | Thin wrappers over cloudinary v2 API |
+| `cloudinary-client.ts` | `uploadAsset`, `deleteAsset`, `bulkDeleteAssets`, `listAssets`, `getAssetDetails`, `renameAsset`, `transformAsset`, `tagAssets`, `generateArchive`, `getFolders`, `createFolder`, `getUsage`, `getOptimizedUrl` | Thin wrappers over cloudinary v2 API |
 | `cloudinary-types.ts` | `AssetData` | asset_id, public_id, version, resource_type, id, type, url, secure_url, display_name, format, bytes, asset_folder, width, height, tags?, created_at, last_updated |
 
 ### 4.2 UI components (`src/components/cloudinary/`)
 
 | Component | Type | Purpose |
 |-----------|------|---------|
-| `AssetGallery.tsx` | Server-rendered | Gallery grid with filter/sort UI |
+| `AssetGallery.tsx` | Client | Gallery grid with select + maxResults controls |
 | `AssetUpload.tsx` | Client | Drag-drop upload UI |
 | `Transformer.tsx` | Client | Brightness/contrast/saturation sliders |
 | `AssetOptimizer.tsx` | Client | Optimization UI |
 | `AssetManagement.tsx` | Client | Search + sort UI |
 | `NoImageMessage.tsx` | Client | Empty state message |
-| `SelectedAsset.tsx` | Client | Asset detail panel (secure_url, public_id, format, bytes, dimensions; onRemove/onDelete) |
+| `SelectedAsset.tsx` | Client (named export) | Asset detail panel (secure_url, public_id, format, bytes, dimensions; onRemove/onDelete) |
 
 ### 4.3 Shared utilities (`src/lib/utils.ts`)
 
@@ -143,15 +152,17 @@ cloudinary-next/
 
 | File | Key settings |
 |------|--------------|
-| `next.config.ts` | `reactStrictMode: true`; `images.domains: ['res.cloudinary.com']`; `cacheLife: { blog: ... }`; `serverActions.bodySizeLimit: '2mb'` |
+| `next.config.ts` | `reactStrictMode: true`; `images.remotePatterns: [{ hostname: 'res.cloudinary.com' }]`; `cacheLife: { blog: ... }`; `experimental.serverActions.bodySizeLimit: '2mb'` |
 | `tsconfig.json` | `strict: true`; path alias `@/*` → `./src/*` |
 | `components.json` | shadcn new-york style; lucide icons; neutral base color |
-| `eslint.config.mjs` | `next/core-web-vitals`, `next/typescript` |
+| `eslint.config.mjs` | flat config: `next/core-web-vitals`, `next/typescript` |
 | `postcss.config.mjs` | `@tailwindcss/postcss` |
-| `package.json` | next 15.3.0, react 19, next-auth ^5.0.0-beta.5, cloudinary ^2.6.0, framer-motion, lucide-react, shadcn deps; scripts: dev (`next dev --turbopack`), build, start, lint |
+| `package.json` | next ^16.3.5, react ^19.3.0, cloudinary ^2.11.0, framer-motion ^13.4.0, lucide-react ^1.47.0, sonner ^2.0.8, typescript ^5.9.3, eslint ^9.39.5, eslint-config-next ^16.3.5; scripts: dev (`next dev --turbopack`), build, start, lint (`eslint`) |
 | `.github/dependabot.yml` | npm + github-actions; weekly Monday 09:00 Asia/Kolkata; minor/patch only; ignore semver-major |
-| `.github/CODEOWNERS` | `* @coderooz` |
+| `.github/CODEOWNERS` | `* @coderooz`; config files owned by @coderooz |
 | `.github/FUNDING.yml` | github: coderooz; buy_me_a_coffee: coderooz; custom: https://www.coderooz.in |
+| `.github/workflows/ci.yml` | Node 22; `npm ci`; lint + typecheck + build; Cloudinary secrets from repo secrets |
+| `.nvmrc` | `22` |
 
 ---
 
@@ -162,30 +173,27 @@ cloudinary-next/
 | `CLOUDINARY_CLOUD_NAME` | `cloudinary-init.ts` |
 | `CLOUDINARY_API_KEY` | `cloudinary-init.ts` |
 | `CLOUDINARY_API_SECRET` | `cloudinary-init.ts` |
-| `CLOUDINARY_NOTIFICATION_URL` | `transform/route.ts` (eager_async notification) |
+| `CLOUDINARY_NOTIFICATION_URL` | `transform/route.ts` (eager_async notification; optional) |
 
 ---
 
 ## 7. Relationships
 
-- `page.tsx` → fetches `/api/private/assets/list?max_results=` → renders `AssetGallery`, `AssetUpload`, `Transformer`, `AssetOptimizer`, `AssetManagement`, `NoImageMessage`, `SelectedAsset`
-- `rop.tsx` → renders `AssetGallery` (named import), `AssetUpload` (named import `ImageUploader`), `SelectedAsset` — **NOTE: named imports do not match default exports; rop.tsx is NOT routed and is likely stale/broken**
+- `page.tsx` → fetches `/api/private/assets/list?max_results=` (inline-async pattern inside `useEffect` with `ignore` cleanup flag) → renders `AssetGallery`, `AssetUpload`, `Transformer`, `AssetOptimizer`, `AssetManagement`, `NoImageMessage`
 - All API routes → `cloudinary-init.ts` (v2 instance) → Cloudinary REST API
 - `cloudinary-client.ts` → `cloudinary-init.ts` + `cloudinary-types.ts`
 - UI components → `src/lib/utils.ts` (`cn`, `formatFileSize`, `formatDate`)
 
 ---
 
-## 8. Known Issues / UNVERIFIED
+## 8. Known Issues / Notes
 
 | Item | Status |
 |------|--------|
-| `rop.tsx` named imports (`AssetGallery`, `ImageUploader`) vs default exports | UNVERIFIED — likely broken; file not routed |
-| `uaif.json` hardcoded placeholder creds (`my-cloud` / `1234567890` / `secret`) | VERIFIED — must be sanitized to env refs before commit |
-| `.mcp-runtime.json` not covered by `.gitignore` | VERIFIED — add to `.gitignore` |
-| `README.md` clone URL `Cloudinary-NextJs.git` vs actual `cloudinary-next.git` | VERIFIED — mismatch |
-| `SECURITY.md` empty | VERIFIED — populated 2026-09-21 |
-| `.github/workflows/auto-tag.yml`, `cli.yml` empty | VERIFIED — removed 2026-09-21 (0-byte stubs would break Actions) |
-| `.vscode/launch.json`, `template.json` empty | VERIFIED |
+| `page.tsx` data fetching uses inline-async pattern (NOT `useCallback`-wrapped) | VERIFIED — required by `react-hooks/set-state-in-effect` rule |
+| `SelectedAsset.tsx` is a named export (`export const SelectedAsset`) | VERIFIED — import as `{ SelectedAsset }` |
 | `public/cloudinary-demo-app.txt` references cloud `dgis8gvg4` (dummy data) | VERIFIED |
 | Both `.project-mcp.json` files declare project `docs-repo` | VERIFIED |
+| `.vscode/launch.json`, `template.json` empty | VERIFIED |
+| `.mcp-runtime.json` gitignored | VERIFIED |
+| 10 lint warnings (unused imports/params) remain | VERIFIED — out of scope, non-blocking |

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     
     const result = await cloudinary.api.resources({
       type: 'upload',
-      resource_type: resourceType as any,
+      resource_type: resourceType,
       prefix: folder,
       max_results: maxResults,
       next_cursor: nextCursor

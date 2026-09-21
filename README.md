@@ -1,36 +1,24 @@
-# Cloudinary NextJs
+# Cloudinary Next
 
-A modern Next.js 15 application showcasing seamless integration with Cloudinary for powerful media management, featuring a beautiful UI built with Shadcn components and fluid animations.
-
-![Cloudinary NextJs Demo](./public/demo-screenshot.png)
+A modern Next.js 16 demo application showcasing Cloudinary media management — gallery, upload, transform, optimize, and manage — built with React 19, TypeScript (strict), Tailwind CSS v4, shadcn/ui, and Framer Motion.
 
 ## Features
 
-- 🖼️ Complete Cloudinary API integration
-- 🚀 Next.js 15 App Router
-- 🔒 Protected API routes with NextAuth.js
-- 💅 Beautiful UI with Shadcn UI components
+- 🖼️ Complete Cloudinary API integration (list, upload, delete, folders, search, tags, transform)
+- 🚀 Next.js 16 App Router with Turbopack
+- 💅 Beautiful UI with shadcn/ui components
 - ✨ Smooth animations with Framer Motion
 - 📱 Fully responsive design
 - 🌗 Light/dark mode support
 - 🧩 Modular and extensible architecture
 
-## Cloudinary Features
-
-- Image/video uploads with drag & drop
-- Asset gallery with filtering and sorting
-- Image transformations and editing
-- Asset tagging and organization
-- Bulk operations (delete, tag, download)
-- Image optimization and responsive delivery
-
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18.17 or later
-- npm or yarn
-- Cloudinary account
+- Node.js 22 (see `.nvmrc`)
+- npm
+- A Cloudinary account
 
 ### Installation
 
@@ -45,150 +33,97 @@ cd cloudinary-next
 
 ```bash
 npm install
-# or
-yarn install
 ```
 
 3. Set up environment variables:
 
-Create a `.env.local` file in the root directory with the following variables:
+Create a `.env.local` file in the root directory:
 
 ```
-# Cloudinary Configuration
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
-
-# NextAuth Configuration
-NEXTAUTH_SECRET=your_nextauth_secret
-NEXTAUTH_URL=http://localhost:3000
-
-# Auth Provider (GitHub example)
-GITHUB_ID=your_github_client_id
-GITHUB_SECRET=your_github_client_secret
 ```
 
 4. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Commands
+
+```bash
+npm run dev        # start dev server (Turbopack)
+npm run build      # production build
+npm run start      # serve production build
+npm run lint       # ESLint (flat config)
+npx tsc --noEmit   # typecheck
+```
 
 ## Project Structure
 
 ```
-cloudinary-next/
-├── src/
-│   ├── app/
-│   │   ├── api/private/assets/
-│   │   │   ├── delete/route.ts
-│   │   │   ├── folders/route.ts
-│   │   │   ├── list/route.ts
-│   │   │   ├── search/route.ts
-│   │   │   ├── tags/route.ts
-│   │   │   ├── transform/route.ts
-│   │   │   └── upload/route.ts
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── rop.tsx
-│   ├── components/
-│   │   ├── cloudinary/
-│   │   │   ├── AssetGallery.tsx
-│   │   │   ├── AssetManagement.tsx
-│   │   │   ├── AssetOptimizer.tsx
-│   │   │   ├── AssetUpload.tsx
-│   │   │   ├── NoImageMessage.tsx
-│   │   │   ├── SelectedAsset.tsx
-│   │   │   └── Transformer.tsx
-│   │   └── ui/
-│   └── lib/
-│       ├── cloudinary/
-│       │   ├── cloudinary-client.ts
-│       │   ├── cloudinary-init.ts
-│       │   └── cloudinary-types.ts
-│       └── utils.ts
-├── public/
-├── .github/
-├── .workspace/
-│   ├── PRI/
-│   └── LFI/
-├── .env.local
-├── .gitignore
-├── next.config.ts
-├── package.json
-├── README.md
-└── tsconfig.json
-```
-
-## Usage Examples
-
-### Basic Image Upload
-
-```tsx
-import { ImageUploader } from "@/components/cloudinary/ImageUploader";
-
-export default function UploadPage() {
-  return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6">Upload Images</h1>
-      <ImageUploader folder="my-uploads" />
-    </div>
-  );
-}
-```
-
-### Display Image Gallery
-
-```tsx
-import { AssetGallery } from "@/components/cloudinary/AssetGallery";
-
-export default function GalleryPage() {
-  return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6">Image Gallery</h1>
-      <AssetGallery folder="my-uploads" />
-    </div>
-  );
-}
+src/
+├── app/
+│   ├── api/private/assets/   # Cloudinary API route handlers
+│   │   ├── delete/route.ts
+│   │   ├── folders/route.ts
+│   │   ├── list/route.ts
+│   │   ├── search/route.ts
+│   │   ├── tags/route.ts
+│   │   ├── transform/route.ts
+│   │   └── upload/route.ts
+│   ├── layout.tsx            # Root layout
+│   └── page.tsx              # Home page (client component)
+├── components/
+│   ├── cloudinary/           # Feature components
+│   │   ├── AssetGallery.tsx
+│   │   ├── AssetManagement.tsx
+│   │   ├── AssetOptimizer.tsx
+│   │   ├── AssetUpload.tsx
+│   │   ├── NoImageMessage.tsx
+│   │   ├── SelectedAsset.tsx
+│   │   └── Transformer.tsx
+│   └── ui/                   # shadcn/ui primitives
+└── lib/
+    ├── cloudinary/
+    │   ├── cloudinary-client.ts
+    │   ├── cloudinary-init.ts
+    │   └── cloudinary-types.ts
+    └── utils.ts
 ```
 
 ## API Documentation
 
 The project implements a comprehensive API for interacting with Cloudinary:
 
-- `POST /api/private/assets/upload` - Upload images to Cloudinary
-- `DELETE /api/private/assets/delete` - Delete images from Cloudinary
-- `GET /api/private/assets/list` - List images from a folder
-- `GET /api/private/assets/search` - Search assets via Cloudinary search expression
-- `GET|POST|DELETE /api/private/assets/folders` - List, create, or delete folders
-- `GET|POST|DELETE /api/private/assets/tags` - List, add, or remove tags
-- `POST /api/private/assets/transform` - Apply transformations to an image
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| `POST` | `/api/private/assets/upload` | Upload a file (multipart form: `file`, optional `folder`, `publicId`, `tags`) |
+| `DELETE` | `/api/private/assets/delete` | Delete an asset (`publicId`, optional `resourceType`) |
+| `GET` | `/api/private/assets/list` | List assets (`folder`, `resource_type`, `max_results`, `next_cursor`) |
+| `GET` | `/api/private/assets/search` | Search assets (`query`, `resource_type`, `max_results`, `next_cursor`) |
+| `GET`/`POST`/`DELETE` | `/api/private/assets/folders` | List, create, or delete folders (`path` / `folderPath`) |
+| `GET`/`POST`/`DELETE` | `/api/private/assets/tags` | List, add, or remove tags (`publicIds`, `tags`) |
+| `POST` | `/api/private/assets/transform` | Apply transformations (`publicId`, `transformations`) |
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, and review the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
 - [Next.js](https://nextjs.org/)
 - [Cloudinary](https://cloudinary.com/)
-- [Shadcn UI](https://ui.shadcn.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
 - [Framer Motion](https://www.framer.com/motion/)
-- [NextAuth.js](https://next-auth.js.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
 ---

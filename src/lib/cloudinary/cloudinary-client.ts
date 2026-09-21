@@ -40,7 +40,7 @@ export async function renameAsset(publicId: string, newPublicId: string, overwri
   return await cloudinary.uploader.rename(publicId, newPublicId, { overwrite });
 }
 
-export async function transformAsset(publicId: string, transformations: Record<string, any>) {
+export async function transformAsset(publicId: string, transformations: Record<string, string | number | boolean>) {
   const url = cloudinary.url(publicId, { transformation: [transformations] });
   return { transformedUrl: url };
 }
@@ -79,7 +79,7 @@ export async function getUsage() {
   return await cloudinary.api.usage();
 }
 
-export function getOptimizedUrl(publicId: string, transformations: Record<string, any> = {}) {
+export function getOptimizedUrl(publicId: string, transformations: Record<string, string | number | boolean> = {}) {
   const defaultTransformations = {
     quality: 'auto',
     fetch_format: 'auto',

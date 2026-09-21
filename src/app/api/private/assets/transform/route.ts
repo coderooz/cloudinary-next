@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     // Create a new transformed image using the explicit method
     const result = await cloudinary.uploader.explicit(publicId, {
       type: 'upload',
-      resource_type: resourceType as any,
+      resource_type: resourceType,
       eager: [transformations],
       eager_async: true,
       eager_notification_url: process.env.CLOUDINARY_NOTIFICATION_URL // Optional webhook URL

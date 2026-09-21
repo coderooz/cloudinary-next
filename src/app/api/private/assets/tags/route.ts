@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await cloudinary.uploader.add_tag(tags, publicIds, {
-      resource_type: resourceType as any
+      resource_type: resourceType
     });
 
     return NextResponse.json(result);
@@ -47,7 +47,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const result = await cloudinary.uploader.remove_tag(tags, publicIds, {
-      resource_type: resourceType as any
+      resource_type: resourceType
     });
 
     return NextResponse.json(result);

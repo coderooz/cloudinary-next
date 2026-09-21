@@ -1,6 +1,6 @@
 # Component Interactions — cloudinary-next
 
-**LFI Version:** 1.0
+**LFI Version:** 2.0
 **Date:** 2026-09-21
 **Status:** VERIFIED
 
@@ -12,21 +12,12 @@
 
 | Component | Import style | Props passed | Interaction |
 |-----------|--------------|--------------|-------------|
-| `AssetGallery` | default | `imagesData`, `selectedImage`, `onSelectImage` | Renders grid; click → `onSelectImage(asset)` |
+| `AssetGallery` | default | `imageData`, `isLoading`, `selectImage`, `maxResults`, `setMaxResult` | Renders grid; click → `selectImage(asset)`; maxResults select → `setMaxResult` |
 | `AssetUpload` | default | — | Upload UI (drag-drop) |
-| `Transformer` | default | `image`, `onTransform` | Sliders → CSS filter preview; submit → `onTransform` |
-| `AssetOptimizer` | default | `image`, `onOptimize` | Optimization UI |
+| `Transformer` | default | `transformImage` | Sliders → CSS filter preview |
+| `AssetOptimizer` | default | `optimizerImage` | Optimization UI |
 | `AssetManagement` | default | `imageData` | Search + sort (client-side) |
 | `NoImageMessage` | default | — | Shown when no image selected for transform/optimize |
-| `SelectedAsset` | default | `asset`, `onRemove`, `onDelete` | Detail panel; remove clears selection; delete calls API |
-
-### 1.2 `src/app/rop.tsx` (Alternate, NOT routed)
-
-| Component | Import style | Status |
-|-----------|--------------|--------|
-| `AssetGallery` | **named** | BROKEN — component is default export |
-| `ImageUploader` (from AssetUpload) | **named** | BROKEN — component is default export |
-| `SelectedAsset` | default | OK |
 
 ---
 
@@ -34,7 +25,7 @@
 
 | Component | API call | Method |
 |-----------|----------|--------|
-| `page.tsx` | `/api/private/assets/list?max_results=N` | GET (useEffect) |
+| `page.tsx` | `/api/private/assets/list?max_results=N` | GET (useEffect, inline-async) |
 | `AssetUpload` | `/api/private/assets/upload` | POST (FormData) |
 | `SelectedAsset` (onDelete) | `/api/private/assets/delete` | DELETE |
 | `Transformer` (onTransform) | `/api/private/assets/transform` | POST |
@@ -58,10 +49,14 @@
 
 ```
 page.tsx state:
-  selectedImage: AssetData | null   ← set by AssetGallery onSelectImage
+  selectedImage: AssetData | null   ← set by AssetGallery selectImage
   imagesData: AssetData[]           ← set by list API response
-  loading: boolean                  ← toggled around fetch
-  maxResults: number                ← drives re-fetch
+  isLoading: boolean                ← toggled around fetch
+  maxResults: number | string       ← drives re-fetch (useEffect deps)
+
+handleMaxResultsChange(value):
+  setLoading(true)
+  setMaxResults(value)
 
 SelectedAsset:
   onRemove → setSelectedImage(null)

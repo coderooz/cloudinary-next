@@ -2,7 +2,6 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Upload, Edit, Layers, Filter, Tag } from 'lucide-react';
@@ -23,38 +22,46 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('gallery');
   const [selectedImage, setSelectedImage] = useState<AssetData | null>(null);
   const [imagesData, setImageData] = useState<AssetData[] | []>([]);
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(true);
   const [maxResults, setMaxResults] = useState<number | string>('5');
   
   useEffect(() => {
-    fetchData();
+    let ignore = false;
+
+    async function loadAssets() {
+      try {
+        const result = await fetch(`/api/private/assets/list?max_results=${maxResults}`);
+        if (result.ok) {
+          const data = await result.json();
+          if (!ignore) {
+            setImageData(data.resources || []);
+            setLoading(false);
+          }
+        } else {
+          console.error('Error fetching data:', result.statusText);
+          if (!ignore) setLoading(false);
+        }
+      } catch (error) {
+        console.error('Fetch failed:', error);
+        if (!ignore) setLoading(false);
+      }
+    }
+
+    loadAssets();
+
+    return () => {
+      ignore = true;
+    };
   }, [maxResults]);
 
-  const fetchData = async () => {
+  const handleMaxResultsChange = (value: number | string) => {
     setLoading(true);
-    try {
-      const result = await fetch(`/api/private/assets/list?max_results=${maxResults}`);
-      if (result.ok) {
-        const data = await result.json();
-        setImageData(data.resources || []); // Change to `data.assets` if your API uses that
-      } else {
-        console.error('Error fetching data:', result.statusText);
-      }
-    } catch (error) {
-      console.error('Fetch failed:', error);
-    } finally {
-      setLoading(false);
-    }
+    setMaxResults(value);
   };
 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Head>
-        <title>Cloudinary SDK Demo</title>
-        <meta name="description" content="Demonstration of Cloudinary SDK with Next.js" />
-      </Head>
-      
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <motion.div
@@ -115,7 +122,7 @@ export default function Home() {
               </TabsList>
               
               <TabsContent value="gallery" className="pt-2">
-                <AssetGallery imageData={imagesData} isLoading={isLoading} selectImage={setSelectedImage} maxResults={maxResults} setMaxResult={setMaxResults}/>
+                <AssetGallery imageData={imagesData} isLoading={isLoading} selectImage={setSelectedImage} maxResults={maxResults} setMaxResult={handleMaxResultsChange}/>
               </TabsContent>
 
               <TabsContent value="upload" className="pt-2">

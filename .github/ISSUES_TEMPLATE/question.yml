@@ -1,0 +1,34 @@
+name: Question
+description: Ask a question about the project
+title: "question: "
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before asking, please check:
+        - The [README](https://github.com/coderooz/cloudinary-next#readme)
+        - Existing [issues](https://github.com/coderooz/cloudinary-next/issues)
+        - [Cloudinary documentation](https://cloudinary.com/documentation)
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: What would you like to know?
+      placeholder: "e.g., How do I use a custom folder for uploads?"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to achieve? Include code snippets if relevant.
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have searched existing issues and documentation first.
+          required: true

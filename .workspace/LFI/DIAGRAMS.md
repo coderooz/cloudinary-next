@@ -1,6 +1,6 @@
 # Logic Flow Diagrams — cloudinary-next
 
-**LFI Version:** 1.0
+**LFI Version:** 2.0
 **Date:** 2026-09-21
 **Status:** VERIFIED
 
@@ -13,21 +13,26 @@ Stable node IDs referenced from `LOGIC_FLOW_INDEX.md`. Node IDs are stable and t
 ```mermaid
 flowchart TD
     A[GET /] --> B[page.tsx mount]
-    B --> C[useEffect: fetch /api/private/assets/list?max_results=N]
-    C --> D[list/route.ts]
-    D --> E[listAssets from cloudinary-client.ts]
-    E --> F[cloudinary.api.resources]
-    F --> G{success?}
-    G -->|yes| H[setImagesData resources]
-    G -->|no| I[500 JSON error]
-    H --> J[render active tab]
-    J --> K[gallery: AssetGallery]
-    J --> L[upload: AssetUpload]
-    J --> M[transform: Transformer / NoImageMessage]
-    J --> N[optimize: AssetOptimizer / NoImageMessage]
-    J --> O[manage: AssetManagement]
-    K --> P[selectImage -> setSelectedImage]
-    P --> Q[SelectedAsset panel]
+    B --> C[useEffect deps maxResults]
+    C --> C1[let ignore = false]
+    C1 --> C2[async loadAssets]
+    C2 --> D[fetch /api/private/assets/list?max_results=N]
+    D --> E[list/route.ts]
+    E --> F[listAssets from cloudinary-client.ts]
+    F --> G[cloudinary.api.resources]
+    G --> H{success?}
+    H -->|yes| I[if !ignore setImageData resources]
+    H -->|no| J[console.error + if !ignore setLoading false]
+    I --> K[if !ignore setLoading false]
+    K --> L[cleanup: ignore = true]
+    L --> M[render active tab]
+    M --> N[gallery: AssetGallery]
+    M --> O[upload: AssetUpload]
+    M --> P[transform: Transformer / NoImageMessage]
+    M --> Q[optimize: AssetOptimizer / NoImageMessage]
+    M --> R[manage: AssetManagement]
+    N --> S[selectImage -> setSelectedImage]
+    S --> T[SelectedAsset panel]
 ```
 
 ---
@@ -96,22 +101,7 @@ flowchart TD
 
 ---
 
-## D-04 — Alternate Page (F-11, UNROUTED)
-
-```mermaid
-flowchart TD
-    A[rop.tsx - Cloudinary Media Manager] --> B[Gallery tab]
-    A --> C[Upload tab]
-    A --> D[Transform tab]
-    B --> E[AssetGallery - BROKEN named import]
-    C --> F[ImageUploader - BROKEN named import]
-    D --> G[SelectedAsset]
-    E -.->|compile error| H[not routed - no page.tsx]
-```
-
----
-
-## D-05 — Shared Library Layer
+## D-04 — Shared Library Layer
 
 ```mermaid
 flowchart LR
@@ -125,7 +115,11 @@ flowchart LR
     C --> I[renameAsset]
     C --> J[transformAsset]
     C --> K[tagAssets]
-    D --> L[cloudinary-types.ts AssetData]
-    G --> L
-    J --> L
+    C --> L[generateArchive]
+    C --> M[getFolders / createFolder]
+    C --> N[getUsage]
+    C --> O[getOptimizedUrl]
+    D --> P[cloudinary-types.ts AssetData]
+    G --> P
+    J --> P
 ```

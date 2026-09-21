@@ -1,6 +1,6 @@
 # Logic Flow Index (LFI) — cloudinary-next
 
-**LFI Version:** 1.0
+**LFI Version:** 2.0
 **Date:** 2026-09-21
 **Status:** VERIFIED (all flows confirmed against source)
 **Companion:** PRI at `.workspace/PRI/PROJECT_REFERENCE_INDEX.md` (structural map — never combined)
@@ -27,7 +27,6 @@ This LFI is the behavioral map of the `cloudinary-next` application. It document
 | F-08 | Client-side transform preview | `src/components/cloudinary/Transformer.tsx` | D-03 | CSS filter sliders (no API call) |
 | F-09 | Client-side optimization UI | `src/components/cloudinary/AssetOptimizer.tsx` | D-03 | Static UI (no API call) |
 | F-10 | Client-side management UI | `src/components/cloudinary/AssetManagement.tsx` | D-03 | Search + sort (client-side filter) |
-| F-11 | Alternate page (unrouted) | `src/app/rop.tsx` | D-04 | "Cloudinary Media Manager" — NOT routed, broken imports |
 
 ---
 
@@ -47,15 +46,19 @@ HTTP request
 
 ```
 GET / (src/app/page.tsx)
-  → useEffect: fetch('/api/private/assets/list?max_results=' + maxResults)
-  → setImagesData / setLoading
+  → useEffect (deps [maxResults]):
+      let ignore = false
+      async loadAssets(): fetch('/api/private/assets/list?max_results=' + maxResults)
+        → if ok: setImageData(data.resources || []); setLoading(false)   [guarded by !ignore]
+        → else/catch: console.error; setLoading(false)                    [guarded by !ignore]
+      loadAssets()
+      return () => { ignore = true }
   → render active tab:
-      gallery → AssetGallery (selectImage → setSelectedImage)
+      gallery → AssetGallery (selectImage → setSelectedImage; maxResults → setMaxResult)
       upload  → AssetUpload
       transform → Transformer (needs selectedImage else NoImageMessage)
       optimize  → AssetOptimizer (needs selectedImage else NoImageMessage)
       manage    → AssetManagement (imageData prop)
-  → SelectedAsset panel (onRemove clears selection; onDelete calls delete API)
 ```
 
 ---
@@ -107,7 +110,7 @@ Transformer (client) → POST /api/private/assets/transform
 | Trigger | Flow | Notes |
 |---------|------|-------|
 | Page load `/` | F-01 | useEffect fetch |
-| maxResults change | F-01 | re-fetch |
+| maxResults change | F-01 | re-fetch (deps `[maxResults]`); `handleMaxResultsChange` sets loading + value |
 | Tab switch | F-01 | client-side state only |
 | Upload form submit | F-02 | via AssetUpload |
 | Delete button | F-03 | via SelectedAsset onDelete |
@@ -130,11 +133,10 @@ See `ERROR_PATHS.md` for the full matrix. Summary:
 
 ---
 
-## 7. Known Behavioral Issues (VERIFIED)
+## 7. Known Behavioral Notes (VERIFIED)
 
-| Issue | Location | Impact |
-|-------|----------|--------|
-| `rop.tsx` imports `ImageUploader` (named) from AssetUpload (default export) | `src/app/rop.tsx:5` | Compile error — file unrouted |
-| `rop.tsx` imports `AssetGallery` (named) from AssetGallery (default export) | `src/app/rop.tsx:6` | Compile error |
-| `rop.tsx` `results` param implicitly `any` | `src/app/rop.tsx:92` | TS strict error |
-| `AssetManagement.tsx` passes `ChangeEvent` to `SetStateAction<string>` | `src/components/cloudinary/AssetManagement.tsx:38` | TS error |
+| Note | Location | Impact |
+|------|----------|--------|
+| Data fetching uses inline-async pattern with `ignore` flag | `src/app/page.tsx:28-55` | Required by `react-hooks/set-state-in-effect`; do NOT wrap in `useCallback` |
+| `SelectedAsset` is a named export | `src/components/cloudinary/SelectedAsset.tsx` | Import as `{ SelectedAsset }` |
+| 10 lint warnings (unused imports/params) | various | Non-blocking; out of scope |

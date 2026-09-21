@@ -10,8 +10,7 @@
 # Build and config files
 package.json @coderooz
 package-lock.json @coderooz
-/.eslintrc* @coderooz
-/.prettierrc* @coderooz
+eslint.config.mjs @coderooz
 /.nvmrc @coderooz
 next.config.ts @coderooz
 tsconfig.json @coderooz

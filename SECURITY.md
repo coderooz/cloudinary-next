@@ -21,7 +21,6 @@ You will receive an acknowledgment within 48 hours and a status update on the fi
 
 ## Security Notes
 
-- Cloudinary credentials (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) are read from environment variables only — never commit them to the repository.
-- The `uaif.json` config references credentials via environment variables (`${CLOUDINARY_*}`); replace with real values locally.
-- API routes under `/api/private/` are intended to be protected by authentication (NextAuth.js). Ensure auth middleware is enabled before deploying publicly.
+- Cloudinary credentials (`CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`) are read from environment variables only — never commit them to the repository. `.env*` is gitignored.
+- API routes under `/api/private/` call the Cloudinary Admin API using the server-side credentials. Do not expose these routes publicly without adding authentication or rate limiting.
 - Keep dependencies updated via Dependabot (weekly, minor/patch).

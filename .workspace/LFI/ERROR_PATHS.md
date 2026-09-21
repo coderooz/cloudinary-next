@@ -1,6 +1,6 @@
 # Error Paths & Edge Cases — cloudinary-next
 
-**LFI Version:** 1.0
+**LFI Version:** 2.0
 **Date:** 2026-09-21
 **Status:** VERIFIED
 
@@ -12,13 +12,13 @@ All API routes follow the same error contract: `{ error: string }` with appropri
 
 | Route | Missing param → 400 | Cloudinary failure → 500 |
 |-------|---------------------|--------------------------|
-| `list` | `folder`/`resource_type`/`max_results`/`next_cursor` optional — no 400 path | `Failed to list assets` |
-| `upload` | `file` missing → 400 `File is required` | `Failed to upload asset` |
-| `delete` | `publicId` missing → 400 `Public ID is required` | `Failed to delete asset` |
-| `folders` | `folder` missing (POST/DELETE) → 400 | `Failed to manage folders` |
-| `search` | `query` missing → 400 `Search query is required` | `Failed to search assets` |
-| `tags` | `tag` missing (POST/DELETE) → 400 | `Failed to manage tags` |
-| `transform` | `publicId`/`transformations` missing → 400 | `Failed to transform asset` |
+| `list` | `folder`/`resource_type`/`max_results`/`next_cursor` optional — no 400 path | `Failed to list resources` |
+| `upload` | `file` missing → 400 `No file provided` | `Failed to upload file` |
+| `delete` | `publicId` missing → 400 `No public_id provided` | `Failed to delete resource` |
+| `folders` | `folderPath` missing (POST/DELETE) → 400 `No folder path provided` | `Failed to list/create/delete folders` |
+| `search` | `query` optional — no 400 path | `Failed to search resources` |
+| `tags` | `publicIds`/`tags` missing (POST/DELETE) → 400 `Missing required parameters` | `Failed to add/remove tags` |
+| `transform` | `publicId`/`transformations` missing → 400 `Missing required parameters` | `Failed to transform resource` |
 
 ---
 
@@ -28,22 +28,22 @@ All API routes follow the same error contract: `{ error: string }` with appropri
 |-----------|----------|
 | No images in gallery | `NoImageMessage` rendered |
 | No image selected for transform/optimize | `NoImageMessage` rendered |
-| Fetch in progress | `loading` state (spinner/skeleton) |
-| Fetch failure | Error logged to console; `imagesData` stays empty |
-| maxResults change | Re-fetch triggered via useEffect dependency |
+| Fetch in progress | `isLoading` state (spinner/skeleton) |
+| Fetch failure | Error logged to console; `imagesData` stays empty; `isLoading` set false |
+| maxResults change | Re-fetch triggered via useEffect dependency; `handleMaxResultsChange` sets loading first |
+| Stale response after maxResults change | `ignore` cleanup flag prevents setState after unmount/re-run |
 
 ---
 
-## 3. Known Type/Compile Errors (VERIFIED via LSP)
+## 3. Known Type/Compile State (VERIFIED via lint + tsc)
 
-| File:Line | Error | Severity |
-|-----------|-------|----------|
-| `src/app/rop.tsx:5` | `Module "@/components/cloudinary/AssetUpload" has no exported member 'ImageUploader'` | ERROR |
-| `src/app/rop.tsx:6` | `Module "@/components/cloudinary/AssetGallery" has no exported member 'AssetGallery'` | ERROR |
-| `src/app/rop.tsx:92` | `Parameter 'results' implicitly has an 'any' type` | ERROR |
-| `src/components/cloudinary/AssetManagement.tsx:38` | `Argument of type 'ChangeEvent<HTMLInputElement, HTMLInputElement>' is not assignable to parameter of type 'SetStateAction<string>'` | ERROR |
+| Item | Status |
+|------|--------|
+| `npm run lint` | 0 errors, 10 warnings (unused imports/params — non-blocking) |
+| `npx tsc --noEmit` | Clean |
+| `npm run build` | Passes (Next.js 16.3.5, Turbopack) |
 
-**Impact:** `rop.tsx` is not routed (no `page.tsx`), so these errors do not block the running app, but they fail `npm run build` / `npm run lint` type checks. `AssetManagement.tsx:38` is in the routed `manage` tab and would fail a production build.
+Warnings (out of scope): `tags/route.ts:6` unused `request`; `AssetGallery.tsx` unused `useState`/`useEffect`/`selectedImage`; `AssetOptimizer.tsx` unused `CardFooter`; `AssetUpload.tsx` unused `useState`/`Image`; `NoImageMessage.tsx` unused `Button`; `Transformer.tsx` unused `CardFooter`; `src/lib/utils.ts:108` unused `e`.
 
 ---
 
@@ -51,7 +51,8 @@ All API routes follow the same error contract: `{ error: string }` with appropri
 
 | Item | Status |
 |------|--------|
-| `uaif.json` hardcoded placeholder credentials | Must be replaced with env-var references before commit |
-| `.mcp-runtime.json` not gitignored | Add to `.gitignore` |
-| `CLOUDINARY_API_SECRET` | Only referenced via env var — never hardcoded in source |
-| `CLOUDINARY_NOTIFICATION_URL` | Read from env in transform route |
+| Cloudinary credentials | Env vars only (`CLOUDINARY_*`); `.env*` gitignored |
+| `/api/private/` routes | Server-side Admin API calls — protect with auth/rate limiting before public deploy |
+| `CLOUDINARY_NOTIFICATION_URL` | Read from env in transform route (optional) |
+| `.mcp-runtime.json` | Gitignored |
+| `.workspace/` (PRI/LFI/Reports) | Gitignored; committed explicitly with `git add -f` |

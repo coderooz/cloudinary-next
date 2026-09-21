@@ -1,5 +1,6 @@
 // app/api/private/assets/upload/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import type { UploadApiOptions } from 'cloudinary';
 import cloudinary from '@/lib/cloudinary/cloudinary-init';
 
 export async function POST(request: NextRequest) {
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
     const publicId = formData.get('publicId') as string;
     const tags = formData.get('tags') as string;
     
-    const uploadOptions: any = {
+    const uploadOptions: UploadApiOptions = {
       folder,
       resource_type: 'auto',
     };
@@ -32,12 +33,7 @@ export async function POST(request: NextRequest) {
     if (tags) uploadOptions.tags = tags.split(',');
 
     // Upload to Cloudinary
-    const result = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload(dataURI, uploadOptions, (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      });
-    });
+    const result = await cloudinary.uploader.upload(dataURI, uploadOptions);
 
     return NextResponse.json(result);
   } catch (error) {

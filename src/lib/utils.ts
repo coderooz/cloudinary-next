@@ -84,10 +84,10 @@ export function delay(ms: number): Promise<void> {
 /**
  * Convert object to query string
  */
-export function objectToQueryString(obj: Record<string, any>): string {
+export function objectToQueryString(obj: Record<string, string | number | boolean>): string {
   return Object.keys(obj)
     .filter(key => obj[key] !== undefined && obj[key] !== null && obj[key] !== '')
-    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(String(obj[key]))}`)
     .join('&');
 }
 
